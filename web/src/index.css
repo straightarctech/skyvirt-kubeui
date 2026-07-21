@@ -1,0 +1,284 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ── Light theme — cool, crisp "instrument panel" surfaces ─────── */
+:root {
+  --th-page: #eef1f5;
+  --th-panel: #ffffff;
+  --th-panel-alt: #f8fafc;
+  --th-hover: #f1f5f9;
+  --th-subtle: #f7f9fb;
+  --th-muted: #e5e9f0;
+  --th-heading: #0f172a;
+  --th-body: #334155;
+  --th-label: #475569;
+  --th-dim: #5b6a7f;
+  --th-ghost: #5c6a7c;
+  --th-faint: #cbd5e1;
+  --th-line: #e3e8ef;
+  --th-accent: #4f46e5;
+  --th-accent-s: #eef2ff;
+  --th-accent-l: #818cf8;
+  --th-danger: #dc2626;
+  --th-danger-s: #fef2f2;
+  --th-danger-l: #f87171;
+  --th-warn: #d97706;
+  --th-warn-s: #fffbeb;
+  --th-warn-l: #fbbf24;
+  --th-ok: #059669;
+  --th-ok-s: #ecfdf5;
+  --th-ok-l: #34d399;
+  --th-info: #2563eb;
+  --th-info-s: #eff6ff;
+  --th-info-l: #60a5fa;
+  /* Semantic status (health) — single source of truth, mirrored in lib/status.ts.
+     For HTML/CSS use these; SVG uses the hex in lib/status.ts (var() can't
+     resolve in SVG presentation attributes). */
+  --status-ok: #16a34a;
+  --status-warn: #b45309;
+  --status-error: #b91c1c;
+  --status-info: #1d4ed8;
+  --status-unknown: #475569;
+  --th-sidebar: #1e1b4b;
+  --th-sidebar-hover: #312e81;
+  --th-sidebar-active: #4338ca;
+  --th-sidebar-text: #e0e7ff;
+  --th-sidebar-text-dim: #a5b4fc;
+  --th-glass-bg: rgba(255, 255, 255, 0.82);
+  --th-glass-border: rgba(227, 232, 239, 0.9);
+  --th-card-glow: transparent;
+  --th-gradient-start: #eef1f5;
+  --th-gradient-end: #e6ebff;
+}
+
+/* ── Dark theme — deep cool charcoal, high-legibility ──────────── */
+.dark {
+  --th-page: #0a0d13;
+  --th-panel: #12151d;
+  --th-panel-alt: #171b24;
+  --th-hover: #1b2029;
+  --th-subtle: #0e1119;
+  --th-muted: #232936;
+  --th-heading: #f1f5f9;
+  --th-body: #cbd5e1;
+  --th-label: #a3aab8;
+  --th-dim: #8b93a3;
+  --th-ghost: #868e9c;
+  --th-faint: #1e2430;
+  --th-line: #242b39;
+  --th-accent: #818cf8;
+  --th-accent-s: rgba(129, 140, 248, 0.13);
+  --th-accent-l: #a5b4fc;
+  --th-danger: #f87171;
+  --th-danger-s: rgba(248, 113, 113, 0.11);
+  --th-danger-l: #fca5a5;
+  --th-warn: #fbbf24;
+  --th-warn-s: rgba(251, 191, 36, 0.11);
+  --th-warn-l: #fcd34d;
+  --th-ok: #34d399;
+  --th-ok-s: rgba(52, 211, 153, 0.11);
+  --th-ok-l: #6ee7b7;
+  --th-info: #60a5fa;
+  --th-info-s: rgba(96, 165, 250, 0.11);
+  --th-info-l: #93c5fd;
+  /* Semantic status — brighter on dark so text/icons keep ≥4.5:1 on the panel. */
+  --status-ok: #34d399;
+  --status-warn: #fbbf24;
+  --status-error: #f87171;
+  --status-info: #60a5fa;
+  --status-unknown: #94a3b8;
+  --th-sidebar: #0d0f16;
+  --th-sidebar-hover: #1b2029;
+  --th-sidebar-active: #4338ca;
+  --th-sidebar-text: #e2e8f0;
+  --th-sidebar-text-dim: #8b93a3;
+  --th-glass-bg: rgba(18, 21, 29, 0.9);
+  --th-glass-border: rgba(36, 43, 57, 0.8);
+  --th-card-glow: transparent;
+  --th-gradient-start: #0a0d13;
+  --th-gradient-end: #0e1119;
+}
+
+/* ── Global styles ──────────────────────────────────────────────── */
+body {
+  font-family: "Inter Variable", "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  background-color: var(--th-page);
+  color: var(--th-body);
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  /* Tabular figures so numbers align in tables/stats; refined Inter glyphs. */
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum" 1, "cv11" 1, "ss01" 1;
+}
+
+/* ── Type scale: tighten large headings, keep small labels legible ─── */
+h1, h2, h3 {
+  letter-spacing: -0.012em;
+  color: var(--th-heading);
+}
+h1 { letter-spacing: -0.02em; }
+/* Micro uppercase labels read better with positive tracking + medium weight. */
+.tracking-wider, .uppercase {
+  letter-spacing: 0.04em;
+}
+
+/* Flat, clean surface — no muddy gradient wash. */
+body {
+  background-image: none;
+}
+.dark body {
+  background-image: none;
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--th-muted);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--th-dim);
+}
+
+/* ── Table density ──────────────────────────────────────────────────
+   `data-density="compact"` on <html> tightens table rows app-wide for users
+   who want more rows per screen (directly beats the "information overload"
+   complaint). Selector specificity (attr + element) beats the Tailwind py-*
+   utility, so no !important needed. */
+:root[data-density="compact"] table th,
+:root[data-density="compact"] table td {
+  padding-top: 0.3rem;
+  padding-bottom: 0.3rem;
+}
+:root[data-density="compact"] table {
+  font-size: 0.8125rem;
+}
+
+/* ── Pinned Actions column ──────────────────────────────────────────
+   On wide resource tables the row controls (Diagnose / Logs / Delete)
+   would otherwise scroll out of view inside .overflow-x-auto. Add
+   `pin-actions` to the scroll wrapper to keep the trailing column fixed
+   to the right edge at any viewport width. The last column must be the
+   Actions column. */
+.pin-actions > table th:last-child,
+.pin-actions > table td:last-child {
+  position: sticky;
+  right: 0;
+  z-index: 1;
+  background: var(--th-panel);
+  border-left: 1px solid var(--th-line);
+}
+.pin-actions > table thead th:last-child {
+  background: var(--th-subtle);
+}
+.pin-actions > table tbody tr:hover td:last-child {
+  background: var(--th-hover);
+}
+
+/* ── Glass card utility ─────────────────────────────────────────── */
+@layer components {
+  .glass-card {
+    background: var(--th-glass-bg);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid var(--th-glass-border);
+    box-shadow:
+      0 1px 3px 0 rgba(0, 0, 0, 0.1),
+      0 0 0 1px var(--th-card-glow),
+      inset 0 1px 0 0 rgba(255, 255, 255, 0.04);
+  }
+
+  .glass-card-hover:hover {
+    border-color: var(--th-accent);
+    box-shadow:
+      0 4px 12px -2px rgba(0, 0, 0, 0.15),
+      0 0 20px -4px var(--th-accent),
+      inset 0 1px 0 0 rgba(255, 255, 255, 0.06);
+  }
+
+  .dark .glass-card {
+    box-shadow:
+      0 1px 4px -1px rgba(0, 0, 0, 0.25),
+      inset 0 1px 0 0 rgba(255, 255, 255, 0.02);
+  }
+
+  .dark .glass-card-hover:hover {
+    box-shadow:
+      0 2px 8px -2px rgba(0, 0, 0, 0.3),
+      inset 0 1px 0 0 rgba(255, 255, 255, 0.03);
+  }
+
+  /* Status glow dots */
+  .status-dot {
+    box-shadow: 0 0 6px currentColor;
+  }
+
+  /* Accent button with glow */
+  .btn-accent {
+    background: linear-gradient(135deg, #6366f1, #4f46e5);
+    color: white;
+    transition: all 0.2s;
+  }
+  .btn-accent:hover {
+    box-shadow: 0 0 20px -4px rgba(99, 102, 241, 0.5);
+    transform: translateY(-1px);
+  }
+
+  /* Sidebar glow for active item */
+  .sidebar-active-glow {
+    box-shadow: 0 0 12px -3px rgba(99, 102, 241, 0.4);
+  }
+}
+
+/* ── Improved selection colors ──────────────────────────────────── */
+::selection {
+  background: rgba(99, 102, 241, 0.3);
+  color: inherit;
+}
+
+/* ── Focus ring — visible, non-color-only keyboard indicator ──────────
+   WCAG 2.4.7 (Focus Visible) + 2.4.11. `!important` because ~60 files use the
+   `focus:outline-none` utility; this must still win. Only shows for keyboard
+   navigation (:focus-visible), never on mouse click. Solid accent (not alpha)
+   keeps contrast ≥5.5:1 on every surface in both themes. */
+*:focus-visible {
+  outline: 2px solid var(--th-accent) !important;
+  outline-offset: 2px;
+  border-radius: 3px;
+}
+
+/* ── Toast slide-in ─────────────────────────────────────────────── */
+@keyframes toast-in {
+  from { opacity: 0; transform: translateX(1rem); }
+  to { opacity: 1; transform: translateX(0); }
+}
+.animate-toast-in {
+  animation: toast-in 0.2s ease-out;
+}
+
+/* ── Skeleton shimmer ───────────────────────────────────────────────── */
+.skeleton-shimmer {
+  background: linear-gradient(
+    90deg,
+    var(--th-subtle) 25%,
+    var(--th-hover) 50%,
+    var(--th-subtle) 75%
+  );
+  background-size: 200% 100%;
+  animation: skeleton-shimmer 1.4s ease-in-out infinite;
+}
+@keyframes skeleton-shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
