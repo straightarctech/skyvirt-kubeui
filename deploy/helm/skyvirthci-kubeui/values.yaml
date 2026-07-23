@@ -1,0 +1,74 @@
+replicaCount: 1
+
+image:
+  repository: skyvirthci-kubeui
+  tag: "1.8.0"
+  pullPolicy: IfNotPresent
+
+service:
+  type: NodePort
+  port: 8080
+  nodePort: 30080
+
+ingress:
+  enabled: false
+  className: ""
+  annotations: {}
+  hosts:
+    - host: kubeui.local
+      paths:
+        - path: /
+          pathType: Prefix
+  tls: []
+
+resources:
+  limits:
+    cpu: 500m
+    memory: 256Mi
+  requests:
+    cpu: 100m
+    memory: 128Mi
+
+serviceAccount:
+  create: true
+  name: kubeui
+
+clusterRoleBinding:
+  create: true
+  role: cluster-admin
+
+# Optional persistent storage. KubeUI is stateless by default (the audit log
+# uses an in-memory ring buffer; saved views are client-side), so this ships
+# DISABLED. Enable it only for DURABLE audit retention — KubeUI then persists the
+# audit log to this database instead of memory. On an air-gapped cluster, mirror
+# the postgres image to the hub first (see values-hub.yaml).
+postgresql:
+  enabled: false
+  image:
+    repository: postgres
+    tag: "16-alpine"
+  storage:
+    size: 5Gi
+    storageClass: ""
+  auth:
+    database: kubeui
+    username: kubeui
+    password: kubeui-secret
+  resources:
+    limits:
+      cpu: 500m
+      memory: 512Mi
+    requests:
+      cpu: 100m
+      memory: 256Mi
+
+env:
+  AUTH_ENABLED: "true"
+  JWT_SECRET: "change-me-in-production"
+  ENGINE_URL: "https://skyvirthci-engine.example.com:8443"
+  # Optional on-prem AI (advisory only — powers the Diagnose "Explain with AI"
+  # button). Leave AI_BASE_URL empty to disable. Point at an OpenAI-compatible
+  # endpoint (e.g. the local vLLM). For prod, source AI_API_KEY from a Secret.
+  AI_BASE_URL: ""
+  AI_MODEL: ""
+  AI_API_KEY: ""
