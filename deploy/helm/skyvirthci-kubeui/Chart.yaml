@@ -1,0 +1,13 @@
+apiVersion: v2
+name: skyvirthci-kubeui
+description: SkyVirt KubeUI — Kubernetes management dashboard deployed into clusters
+type: application
+version: 1.8.6
+appVersion: "1.8.6"
+keywords:
+  - kubernetes
+  - dashboard
+  - management
+  - skyvirthci
+maintainers:
+  - name: SkyVirt
