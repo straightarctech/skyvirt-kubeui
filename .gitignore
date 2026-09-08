@@ -1,0 +1,9 @@
+bin/
+web/dist/
+web/node_modules/
+cmd/kubeui/web/dist/
+*.tar
+# Stray compiled binaries at repo root (build output belongs in bin/)
+/kubeui
+/kubeui-server
+*.tgz

@@ -1,0 +1,12 @@
+SkyVirt KubeUI
+Copyright 2026 StraightArc Technologies Pvt. Ltd.
+
+This product includes software developed at
+StraightArc Technologies Pvt. Ltd. (https://straightarc.com).
+
+Licensed under the Apache License, Version 2.0. See the LICENSE file
+for the full terms.
+
+This project bundles third-party open-source components (Go modules and
+npm packages) under their own licenses; see go.mod / web/package.json and
+the respective vendored license files for details.
