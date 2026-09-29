@@ -1,0 +1,111 @@
+# SkyVirt KubeUI — build and test on every push to main and every pull request.
+#
+# These are the same commands you run locally, in the same order, so a red run
+# here reproduces with `make` on your machine:
+#
+#     make check-version   # VERSION agrees with the chart, values and package.json
+#     make                 # builds the web UI and embeds it into bin/kubeui
+#     npm run lint         # tsc --noEmit (strict) over the React sources
+#     npm test             # node --test over the pure lib/ modules
+#     make vet             # go vet ./...
+#     make test            # go test ./...
+#
+# Note on ordering: cmd/kubeui/main.go embeds the built UI with
+# `//go:embed web/dist`, and that directory is generated, not committed. `make`
+# creates it, so it must run before any Go command — otherwise every Go step
+# fails with "pattern web/dist: no matching files found". If you have just
+# cloned the repo, run `make` before `go vet` or `go test` for the same reason.
+
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+          cache-dependency-path: go.sum
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+
+      # Cheapest gate first: a version mismatch between VERSION, the Helm chart
+      # and package.json has shipped before and is caught in seconds.
+      - name: Check version consistency
+        run: make check-version
+
+      # Builds the web bundle and embeds it into the binary. Also the step that
+      # creates cmd/kubeui/web/dist for everything below.
+      - name: Build
+        run: make
+
+      # Stricter than the build: strict mode plus noUnusedLocals /
+      # noUnusedParameters. node_modules is already installed by `make`.
+      - name: Typecheck web
+        run: npm run lint
+        working-directory: web
+
+      # Unit tests for the pure frontend logic, on Node's built-in runner — no test
+      # framework dependency. These catch the class of bug tsc cannot see: logic that
+      # type-checks perfectly and still produces the wrong answer.
+      - name: Test web
+        run: npm test
+        working-directory: web
+
+      # Enforceable because the tree was made gofmt-clean in its own commit.
+      # Scoped to cmd/ and internal/ so it never walks web/node_modules.
+      - name: Check formatting
+        run: |
+          unformatted="$(gofmt -l cmd internal)"
+          if [ -n "$unformatted" ]; then
+            echo "not gofmt-clean:"; echo "$unformatted"
+            echo "run 'make fmt' and commit the result"
+            exit 1
+          fi
+          echo "ok: gofmt clean"
+
+      - name: Vet
+        run: make vet
+
+      - name: Test
+        run: make test
+
+      # Proves the binary REPORTS the version the tree claims, rather than
+      # trusting the build. A tag is a label; the binary is the artifact.
+      #
+      # Deliberately a runtime check, not `grep <version> bin/kubeui`: a short
+      # version string occurs by chance in a ~48MB binary, so grep false-passes
+      # (verified — "9.9.9" matches a 1.8.13 build). Only the value the process
+      # announces proves the ldflags stamp landed.
+      #
+      # The binary exits non-zero here: with no cluster and no kubeconfig it
+      # logs its version and then fatals in k8s.NewClient. That is expected, so
+      # the exit code is ignored and only the first log line is inspected.
+      - name: Verify reported version
+        run: |
+          expected="$(cat VERSION)"
+          line="$(timeout 30 ./bin/kubeui 2>&1 | head -1 || true)"
+          echo "$line"
+          if ! echo "$line" | grep -q "\"version\":\"${expected}\""; then
+            echo "binary does not report version ${expected}"
+            exit 1
+          fi
+          echo "ok: binary reports ${expected}"

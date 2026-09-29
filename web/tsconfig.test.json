@@ -1,0 +1,26 @@
+{
+  // Test build. The app tsconfig is noEmit with bundler resolution, which is right
+  // for Vite but produces nothing to run. This one emits CommonJS into .test-build
+  // so Node's built-in runner can execute it.
+  //
+  // Why CommonJS: package.json declares "type": "module", so emitted .js would be
+  // treated as ESM, and ESM requires explicit file extensions that TypeScript does
+  // not add. The test script writes a {"type":"commonjs"} marker into the output
+  // directory to override that for the build only.
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": false,
+    "outDir": ".test-build",
+    "rootDir": "src",
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "allowImportingTsExtensions": false,
+    "esModuleInterop": true,
+    "isolatedModules": false,
+    "types": ["node"],
+    "lib": ["ES2020", "DOM"]
+  },
+  // Glob so a new src/lib module and its test are picked up without editing
+  // this file — a test that silently is not compiled is a test that does not run.
+  "include": ["src/lib/**/*.ts"]
+}
